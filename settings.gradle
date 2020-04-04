@@ -15,6 +15,7 @@
  */
 
 include "webauthn4j-core"
+include "webauthn4j-demo-quarkus"
 include 'webauthn4j-metadata'
 include 'webauthn4j-test'
 include 'webauthn4j-util'
