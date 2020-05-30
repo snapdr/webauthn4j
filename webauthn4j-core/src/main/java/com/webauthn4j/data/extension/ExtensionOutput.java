@@ -22,10 +22,10 @@ import java.util.Set;
 public interface ExtensionOutput extends Serializable {
     String getIdentifier();
 
-    void validate();
-
     Set<String> getKeys();
 
     Object getValue(String key);
+
+    void validate();
 
 }

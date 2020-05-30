@@ -27,4 +27,6 @@ public interface ExtensionInput extends Serializable {
 
     Object getValue(String key);
 
+    void validate();
+
 }

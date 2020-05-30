@@ -22,7 +22,7 @@ public class AuthenticationObject {
     // ================================================================================================
 
     private final byte[] credentialId;
-    private final AuthenticatorData<AuthenticationExtensionAuthenticatorOutput<?>> authenticatorData;
+    private final AuthenticatorData<AuthenticationExtensionAuthenticatorOutput> authenticatorData;
     private final byte[] authenticatorDataBytes;
     private final CollectedClientData collectedClientData;
     private final byte[] collectedClientDataBytes;
@@ -34,7 +34,7 @@ public class AuthenticationObject {
     @SuppressWarnings("squid:S00107")
     public AuthenticationObject(
             byte[] credentialId,
-            AuthenticatorData<AuthenticationExtensionAuthenticatorOutput<?>> authenticatorData,
+            AuthenticatorData<AuthenticationExtensionAuthenticatorOutput> authenticatorData,
             byte[] authenticatorDataBytes,
             CollectedClientData collectedClientData,
             byte[] collectedClientDataBytes,
@@ -55,7 +55,7 @@ public class AuthenticationObject {
         return ArrayUtil.clone(credentialId);
     }
 
-    public AuthenticatorData<AuthenticationExtensionAuthenticatorOutput<?>> getAuthenticatorData() {
+    public AuthenticatorData<AuthenticationExtensionAuthenticatorOutput> getAuthenticatorData() {
         return authenticatorData;
     }
 

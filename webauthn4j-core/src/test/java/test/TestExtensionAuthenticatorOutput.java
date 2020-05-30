@@ -18,8 +18,9 @@ package test;
 
 import com.webauthn4j.data.extension.SingleValueExtensionOutputBase;
 import com.webauthn4j.data.extension.authenticator.RegistrationExtensionAuthenticatorOutput;
+import com.webauthn4j.validator.exception.ConstraintViolationException;
 
-public class TestExtensionAuthenticatorOutput extends SingleValueExtensionOutputBase<Boolean> implements RegistrationExtensionAuthenticatorOutput<Boolean> {
+public class TestExtensionAuthenticatorOutput extends SingleValueExtensionOutputBase<Boolean> implements RegistrationExtensionAuthenticatorOutput {
 
     public static String ID = "test";
 
@@ -31,4 +32,12 @@ public class TestExtensionAuthenticatorOutput extends SingleValueExtensionOutput
     public String getIdentifier() {
         return ID;
     }
+
+    @Override
+    public void validate() {
+        if(getValue() == null){
+            throw new ConstraintViolationException("value must not be null");
+        }
+    }
+
 }

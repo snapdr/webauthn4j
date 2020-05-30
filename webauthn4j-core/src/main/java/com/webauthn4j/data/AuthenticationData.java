@@ -31,7 +31,7 @@ public class AuthenticationData implements Serializable {
 
     private final byte[] credentialId;
     private final byte[] userHandle;
-    private final AuthenticatorData<AuthenticationExtensionAuthenticatorOutput<?>> authenticatorData;
+    private final AuthenticatorData<AuthenticationExtensionAuthenticatorOutput> authenticatorData;
     private final byte[] authenticatorDataBytes;
     private final CollectedClientData collectedClientData;
     private final byte[] collectedClientDataBytes;
@@ -42,7 +42,7 @@ public class AuthenticationData implements Serializable {
     public AuthenticationData(
             byte[] credentialId,
             byte[] userHandle,
-            AuthenticatorData<AuthenticationExtensionAuthenticatorOutput<?>> authenticatorData,
+            AuthenticatorData<AuthenticationExtensionAuthenticatorOutput> authenticatorData,
             byte[] authenticatorDataBytes,
             CollectedClientData collectedClientData,
             byte[] collectedClientDataBytes,
@@ -66,7 +66,7 @@ public class AuthenticationData implements Serializable {
         return ArrayUtil.clone(userHandle);
     }
 
-    public AuthenticatorData<AuthenticationExtensionAuthenticatorOutput<?>> getAuthenticatorData() {
+    public AuthenticatorData<AuthenticationExtensionAuthenticatorOutput> getAuthenticatorData() {
         return authenticatorData;
     }
 

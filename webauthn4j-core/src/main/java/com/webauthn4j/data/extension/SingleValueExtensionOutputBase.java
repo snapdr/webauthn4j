@@ -49,13 +49,6 @@ public abstract class SingleValueExtensionOutputBase<T extends Serializable> imp
     }
 
     @Override
-    public void validate() {
-        if(getValue() == null){
-            throw new ConstraintViolationException("value must not be null");
-        }
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

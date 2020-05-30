@@ -19,6 +19,7 @@ package com.webauthn4j.data.extension.client;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.webauthn4j.data.extension.SingleValueExtensionOutputBase;
+import com.webauthn4j.validator.exception.ConstraintViolationException;
 
 public class CredentialPropertiesExtensionClientOutput
         extends SingleValueExtensionOutputBase<CredentialPropertiesOutput>
@@ -35,4 +36,12 @@ public class CredentialPropertiesExtensionClientOutput
     public String getIdentifier() {
         return ID;
     }
+
+    @Override
+    public void validate() {
+        if(getValue() == null){
+            throw new ConstraintViolationException("value must not be null");
+        }
+    }
+
 }

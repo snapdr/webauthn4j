@@ -19,6 +19,7 @@ package com.webauthn4j.data.extension.client;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.webauthn4j.data.extension.SingleValueExtensionInputBase;
+import com.webauthn4j.validator.exception.ConstraintViolationException;
 
 public class CredentialPropertiesExtensionClientInput extends SingleValueExtensionInputBase<Boolean> implements RegistrationExtensionClientInput {
 
@@ -37,4 +38,12 @@ public class CredentialPropertiesExtensionClientInput extends SingleValueExtensi
     public Boolean getCredProps(){
         return getValue();
     }
+
+    @Override
+    public void validate() {
+        if(getValue() == null){
+            throw new ConstraintViolationException("value must not be null");
+        }
+    }
+
 }

@@ -41,7 +41,7 @@ import com.webauthn4j.data.extension.client.AuthenticationExtensionsClientOutput
 import com.webauthn4j.data.extension.client.RegistrationExtensionClientOutput;
 import com.webauthn4j.metadata.data.MetadataItem;
 import com.webauthn4j.metadata.data.MetadataItemImpl;
-import com.webauthn4j.metadata.data.statement.*;
+import com.webauthn4j.data.statement.*;
 import com.webauthn4j.metadata.data.toc.AuthenticatorStatus;
 import com.webauthn4j.metadata.data.toc.StatusReport;
 import com.webauthn4j.server.ServerProperty;
@@ -176,7 +176,7 @@ public class TestDataUtil {
     public static AttestationObject createAttestationObjectWithSelfPackedECAttestationStatement(byte[] clientDataHash) {
         KeyPair keyPair = ECUtil.createKeyPair();
         EC2COSEKey ec2CredentialPublicKey = EC2COSEKey.create((ECPublicKey) keyPair.getPublic(), COSEAlgorithmIdentifier.ES256);
-        AuthenticatorData<RegistrationExtensionAuthenticatorOutput<?>> authenticatorData = createAuthenticatorData(ec2CredentialPublicKey);
+        AuthenticatorData<RegistrationExtensionAuthenticatorOutput> authenticatorData = createAuthenticatorData(ec2CredentialPublicKey);
         byte[] authenticatorDataBytes = authenticatorDataConverter.convert(authenticatorData);
         byte[] signedData = createSignedData(authenticatorDataBytes, clientDataHash);
         byte[] signature = calculateSignature(keyPair.getPrivate(), signedData);
@@ -186,7 +186,7 @@ public class TestDataUtil {
     public static AttestationObject createAttestationObjectWithSelfPackedRSAAttestationStatement(byte[] clientDataHash) {
         KeyPair keyPair = RSAUtil.createKeyPair();
         RSACOSEKey rsaCredentialPublicKey = RSACOSEKey.create((RSAPublicKey) keyPair.getPublic(), COSEAlgorithmIdentifier.RS256);
-        AuthenticatorData<RegistrationExtensionAuthenticatorOutput<?>> authenticatorData = createAuthenticatorData(rsaCredentialPublicKey);
+        AuthenticatorData<RegistrationExtensionAuthenticatorOutput> authenticatorData = createAuthenticatorData(rsaCredentialPublicKey);
         byte[] authenticatorDataBytes = authenticatorDataConverter.convert(authenticatorData);
         byte[] signedData = createSignedData(authenticatorDataBytes, clientDataHash);
         byte[] signature = calculateSignature(keyPair.getPrivate(), signedData);
@@ -199,7 +199,7 @@ public class TestDataUtil {
     }
 
     public static AttestationObject createAttestationObject(byte[] clientDataHash, PrivateKey attestationPrivateKey, Function<byte[], AttestationStatement> attestationStatementProvider) {
-        AuthenticatorData<RegistrationExtensionAuthenticatorOutput<?>> authenticatorData = createAuthenticatorData();
+        AuthenticatorData<RegistrationExtensionAuthenticatorOutput> authenticatorData = createAuthenticatorData();
         byte[] authenticatorDataBytes = authenticatorDataConverter.convert(authenticatorData);
         byte[] signedData = createSignedData(authenticatorDataBytes, clientDataHash);
         byte[] signature = calculateSignature(attestationPrivateKey, signedData);
@@ -207,7 +207,7 @@ public class TestDataUtil {
     }
 
     public static AttestationObject createAttestationObject(AttestationStatement attestationStatement) {
-        AuthenticatorData<RegistrationExtensionAuthenticatorOutput<?>> authenticatorData = createAuthenticatorData();
+        AuthenticatorData<RegistrationExtensionAuthenticatorOutput> authenticatorData = createAuthenticatorData();
         return new AttestationObject(authenticatorData, attestationStatement);
     }
 
@@ -218,12 +218,12 @@ public class TestDataUtil {
     // ~ Other data structures
     // ========================================================================================================
 
-    public static <T extends ExtensionAuthenticatorOutput<?>> AuthenticatorData<T> createAuthenticatorData() {
+    public static <T extends ExtensionAuthenticatorOutput> AuthenticatorData<T> createAuthenticatorData() {
         byte flags = BIT_UP | BIT_AT;
         return new AuthenticatorData<>(new byte[32], flags, 1, createAttestedCredentialData());
     }
 
-    public static <T extends RegistrationExtensionAuthenticatorOutput<?>> AuthenticatorData<T> createAuthenticatorData(COSEKey coseKey) {
+    public static <T extends RegistrationExtensionAuthenticatorOutput> AuthenticatorData<T> createAuthenticatorData(COSEKey coseKey) {
         byte flags = BIT_UP | BIT_AT;
         return new AuthenticatorData<>(new byte[32], flags, 1, createAttestedCredentialData(coseKey));
     }

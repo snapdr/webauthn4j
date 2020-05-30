@@ -18,16 +18,13 @@ package com.webauthn4j.data.extension.client;
 
 import com.webauthn4j.data.extension.SingleValueExtensionOutputBase;
 import com.webauthn4j.data.extension.UvmEntries;
-
-import java.util.Collections;
-import java.util.Set;
+import com.webauthn4j.validator.exception.ConstraintViolationException;
 
 public class UserVerificationMethodExtensionClientOutput
         extends SingleValueExtensionOutputBase<UvmEntries>
         implements RegistrationExtensionClientInput, AuthenticationExtensionClientOutput {
 
-    public static final String ID = "appid";
-    public static final Set<String> KEYS = Collections.singleton(ID);
+    public static final String ID = "uvm";
 
     public UserVerificationMethodExtensionClientOutput(UvmEntries value) {
         super(value);
@@ -36,6 +33,13 @@ public class UserVerificationMethodExtensionClientOutput
     @Override
     public String getIdentifier() {
         return ID;
+    }
+
+    @Override
+    public void validate() {
+        if(getValue() == null){
+            throw new ConstraintViolationException("value must not be null");
+        }
     }
 
 }

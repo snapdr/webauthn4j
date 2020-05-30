@@ -53,7 +53,7 @@ class AuthenticatorImplTest {
         AttestedCredentialData attestedCredentialData = TestDataUtil.createAttestedCredentialData();
         AttestationStatement attestationStatement = TestAttestationStatementUtil.createFIDOU2FAttestationStatement();
         AuthenticatorImpl authenticator = new AuthenticatorImpl(null, null, 0);
-        HashMap<String, RegistrationExtensionAuthenticatorOutput<?>> authenticatorExtensions = new HashMap<>();
+        HashMap<String, RegistrationExtensionAuthenticatorOutput> authenticatorExtensions = new HashMap<>();
         HashMap<String, RegistrationExtensionClientOutput> clientExtensions = new HashMap<>();
         Set<AuthenticatorTransport> transports = Collections.singleton(AuthenticatorTransport.USB);
         authenticator.setAttestedCredentialData(attestedCredentialData);

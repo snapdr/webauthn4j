@@ -144,7 +144,7 @@ class BeanAssertUtil {
         validate(attestationObject.getAuthenticatorData());
     }
 
-    public static <T extends ExtensionAuthenticatorOutput<?>> void validate(AuthenticatorData<T> authenticatorData) {
+    public static <T extends ExtensionAuthenticatorOutput> void validate(AuthenticatorData<T> authenticatorData) {
         if (authenticatorData == null) {
             throw new ConstraintViolationException("authenticatorData must not be null");
         }
@@ -196,7 +196,7 @@ class BeanAssertUtil {
     }
 
     @SuppressWarnings("unused")
-    public static <T extends ExtensionAuthenticatorOutput<?>> void validateAuthenticatorExtensionsOutputs(
+    public static <T extends ExtensionAuthenticatorOutput> void validateAuthenticatorExtensionsOutputs(
             AuthenticationExtensionsAuthenticatorOutputs<T> authenticationExtensionsAuthenticatorOutputs) {
         //nop
     }

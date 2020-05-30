@@ -17,6 +17,7 @@
 package com.webauthn4j.data.extension.client;
 
 import com.webauthn4j.data.extension.SingleValueExtensionInputBase;
+import com.webauthn4j.validator.exception.ConstraintViolationException;
 
 public class FIDOAppIDExtensionClientInput extends SingleValueExtensionInputBase<String> implements AuthenticationExtensionClientInput {
 
@@ -33,6 +34,13 @@ public class FIDOAppIDExtensionClientInput extends SingleValueExtensionInputBase
 
     public String getAppid() {
         return getValue(ID);
+    }
+
+    @Override
+    public void validate() {
+        if(getValue() == null){
+            throw new ConstraintViolationException("value must not be null");
+        }
     }
 
 }

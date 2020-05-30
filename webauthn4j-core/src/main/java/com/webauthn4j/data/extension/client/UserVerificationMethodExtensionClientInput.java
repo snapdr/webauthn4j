@@ -17,6 +17,7 @@
 package com.webauthn4j.data.extension.client;
 
 import com.webauthn4j.data.extension.SingleValueExtensionInputBase;
+import com.webauthn4j.validator.exception.ConstraintViolationException;
 
 public class UserVerificationMethodExtensionClientInput extends SingleValueExtensionInputBase<Boolean> implements AuthenticationExtensionClientInput {
 
@@ -33,6 +34,13 @@ public class UserVerificationMethodExtensionClientInput extends SingleValueExten
 
     public Boolean getUvm() {
         return getValue(ID);
+    }
+
+    @Override
+    public void validate() {
+        if(getValue() == null){
+            throw new ConstraintViolationException("value must not be null");
+        }
     }
 
 }

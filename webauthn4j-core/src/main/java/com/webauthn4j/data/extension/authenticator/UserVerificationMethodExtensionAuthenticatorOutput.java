@@ -16,9 +16,29 @@
 
 package com.webauthn4j.data.extension.authenticator;
 
+import com.webauthn4j.data.extension.SingleValueExtensionOutputBase;
 import com.webauthn4j.data.extension.UvmEntries;
+import com.webauthn4j.validator.exception.ConstraintViolationException;
 
-public class UserVerificationMethodExtensionAuthenticatorOutput {
-    public UserVerificationMethodExtensionAuthenticatorOutput(UvmEntries uvm) {
+public class UserVerificationMethodExtensionAuthenticatorOutput extends SingleValueExtensionOutputBase<UvmEntries>
+        implements RegistrationExtensionAuthenticatorOutput, AuthenticationExtensionAuthenticatorOutput{
+
+    public static final String ID = "uvm";
+
+    public UserVerificationMethodExtensionAuthenticatorOutput(UvmEntries value) {
+        super(value);
     }
+
+    @Override
+    public String getIdentifier() {
+        return ID;
+    }
+
+    @Override
+    public void validate() {
+        if(getValue() == null){
+            throw new ConstraintViolationException("value must not be null");
+        }
+    }
+
 }
