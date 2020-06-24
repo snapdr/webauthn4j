@@ -295,13 +295,12 @@ public abstract class WebAuthnModelAuthenticator implements WebAuthnAuthenticato
     }
 
     private AuthenticationExtensionsAuthenticatorOutputs<RegistrationExtensionAuthenticatorOutput<?>> processRegistrationExtensions(MakeCredentialRequest makeCredentialRequest) {
-        AuthenticationExtensionsClientInputs<RegistrationExtensionClientInput<?>> extensions = makeCredentialRequest.getExtensions();
+        AuthenticationExtensionsClientInputs<RegistrationExtensionClientInput> extensions = makeCredentialRequest.getExtensions();
         if (extensions == null) {
             extensions = new AuthenticationExtensionsClientInputs<>();
         }
         Map<String, RegistrationExtensionAuthenticatorOutput<?>> processedExtensions = new HashMap<>();
-        for (Map.Entry<String, RegistrationExtensionClientInput<?>> entry : extensions.entrySet()) {
-            String extensionIdentifier = entry.getKey();
+        for (String extensionIdentifier : extensions.getKeys()) {
             //TODO
         }
         return new AuthenticationExtensionsAuthenticatorOutputs<>(processedExtensions);

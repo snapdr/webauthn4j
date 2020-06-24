@@ -16,18 +16,25 @@
 
 package com.webauthn4j.data.extension.client;
 
-import com.webauthn4j.data.extension.AbstractExtensionInput;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.webauthn4j.data.extension.SingleValueExtensionInputBase;
 
-public class CredentialPropertiesExtensionClientInput extends AbstractExtensionInput<Boolean> implements RegistrationExtensionClientInput<Boolean> {
+public class CredentialPropertiesExtensionClientInput extends SingleValueExtensionInputBase<Boolean> implements RegistrationExtensionClientInput {
 
     public static final String ID = "credProps";
 
-    public CredentialPropertiesExtensionClientInput(Boolean value) {
+    @JsonCreator
+    public CredentialPropertiesExtensionClientInput(@JsonProperty(ID) Boolean value) {
         super(value);
     }
 
     @Override
     public String getIdentifier() {
         return ID;
+    }
+
+    public Boolean getCredProps(){
+        return getValue();
     }
 }

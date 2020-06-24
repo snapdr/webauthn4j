@@ -16,11 +16,13 @@
 
 package com.webauthn4j.data.extension.authenticator;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.webauthn4j.data.AbstractImmutableMap;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.webauthn4j.util.AssertUtil;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 /**
  * {@link AuthenticationExtensionsAuthenticatorInputs} containing the authenticator extension input values for
@@ -29,15 +31,144 @@ import java.util.Map;
  * @see <a href="https://www.w3.org/TR/webauthn-1/#typedefdef-authenticationextensionsauthenticatorinputs">
  * §5.9. Authentication Extensions Authenticator Inputs (typedef AuthenticationExtensionsAuthenticatorInputs)</a>
  */
-public class AuthenticationExtensionsAuthenticatorInputs<V extends ExtensionAuthenticatorInput<?>> extends AbstractImmutableMap<String, V> {
+public class AuthenticationExtensionsAuthenticatorInputs<T extends ExtensionAuthenticatorInput>  {
 
-    @JsonCreator
-    public AuthenticationExtensionsAuthenticatorInputs(Map<String, V> map) {
-        super(map);
+    @JsonProperty
+    private Boolean uvm;
+    @JsonIgnore
+    private Map<String, Object> unknowns = new HashMap<>();
+    @JsonIgnore
+    private Map<Class<? extends ExtensionAuthenticatorInput>, ExtensionAuthenticatorInput> extensions;
+
+    @JsonAnyGetter
+    private Map<String, Object> getUnknowns(){
+        return Collections.unmodifiableMap(this.unknowns);
     }
 
-    public AuthenticationExtensionsAuthenticatorInputs() {
-        this(Collections.emptyMap());
+    @JsonAnySetter
+    private void setUnknowns(String name, Object value){
+        this.unknowns.put(name, value);
     }
+
+    @JsonIgnore
+    public Set<String> getKeys() {
+        Set<String> keys = new HashSet<>();
+        if(uvm != null){
+            keys.add("uvm");
+        }
+        keys.addAll(getUnknownKeys());
+        return keys;
+    }
+
+    @JsonIgnore
+    public Set<String> getUnknownKeys() {
+        return unknowns.keySet();
+    }
+
+    @JsonIgnore
+    public Object getValue(String key) {
+        switch (key){
+            case "uvm":
+                return uvm;
+            default:
+                return unknowns.get(key);
+        }
+    }
+
+    @JsonIgnore
+    public Boolean getUvm(){
+        return this.uvm;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public <E extends T> E getExtension(Class<E> tClass) {
+        return (E)getExtensions().get(tClass);
+    }
+
+    @JsonIgnore
+    private Map<Class<? extends ExtensionAuthenticatorInput>, ? extends ExtensionAuthenticatorInput> getExtensions(){
+        if(extensions == null){
+            extensions = new HashMap<>();
+            if(uvm != null){
+                extensions.put(UserVerificationMethodExtensionAuthenticatorInput.class, new UserVerificationMethodExtensionAuthenticatorInput(uvm));
+            }
+        }
+        return extensions;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AuthenticationExtensionsAuthenticatorInputs<?> that = (AuthenticationExtensionsAuthenticatorInputs<?>) o;
+        return Objects.equals(uvm, that.uvm) &&
+                Objects.equals(unknowns, that.unknowns) &&
+                Objects.equals(extensions, that.extensions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uvm, unknowns, extensions);
+    }
+
+    public static class BuilderForRegistration {
+
+        private Boolean uvm;
+
+        private Map<String, Object> unknowns = Collections.emptyMap();
+
+        public BuilderForRegistration(){}
+
+        public AuthenticationExtensionsAuthenticatorInputs<RegistrationExtensionAuthenticatorInput> build(){
+            AuthenticationExtensionsAuthenticatorInputs<RegistrationExtensionAuthenticatorInput> instance = new AuthenticationExtensionsAuthenticatorInputs<>();
+            instance.uvm = this.uvm;
+            instance.unknowns = this.unknowns;
+
+            return instance;
+        }
+
+        public AuthenticationExtensionsAuthenticatorInputs.BuilderForRegistration setUvm(Boolean uvm){
+            this.uvm = uvm;
+            return this;
+        }
+
+        public AuthenticationExtensionsAuthenticatorInputs.BuilderForRegistration setUnknowns(Map<String, Object> unknowns){
+            AssertUtil.notNull(unknowns, "unknowns must not be null.");
+            this.unknowns = unknowns;
+            return this;
+        }
+
+    }
+
+    public static class BuilderForAuthentication {
+
+        private Boolean uvm;
+
+        private Map<String, Object> unknowns = Collections.emptyMap();
+
+        public BuilderForAuthentication(){}
+
+        public AuthenticationExtensionsAuthenticatorInputs<AuthenticationExtensionAuthenticatorInput> build(){
+            AuthenticationExtensionsAuthenticatorInputs<AuthenticationExtensionAuthenticatorInput> instance = new AuthenticationExtensionsAuthenticatorInputs<>();
+            instance.uvm = this.uvm;
+            instance.unknowns = this.unknowns;
+
+            return instance;
+        }
+
+        public AuthenticationExtensionsAuthenticatorInputs.BuilderForAuthentication setUvm(Boolean uvm){
+            this.uvm = uvm;
+            return this;
+        }
+
+        public AuthenticationExtensionsAuthenticatorInputs.BuilderForAuthentication setUnknowns(Map<String, Object> unknowns){
+            AssertUtil.notNull(unknowns, "unknowns must not be null.");
+            this.unknowns = unknowns;
+            return this;
+        }
+
+    }
+
 
 }

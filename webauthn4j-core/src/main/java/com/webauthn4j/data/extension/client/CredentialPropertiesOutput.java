@@ -16,36 +16,36 @@
 
 package com.webauthn4j.data.extension.client;
 
-import com.webauthn4j.data.extension.AbstractExtensionInput;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Objects;
 
-public class UnknownExtensionClientInput extends AbstractExtensionInput<Serializable> implements RegistrationExtensionClientInput<Serializable>, AuthenticationExtensionClientInput<Serializable> {
+public class CredentialPropertiesOutput implements Serializable {
 
-    private final String name;
+    final Boolean rk;
 
-    public UnknownExtensionClientInput(String name, Serializable value) {
-        super(value);
-        this.name = name;
+    @JsonCreator
+    public CredentialPropertiesOutput(
+            @JsonProperty("rk") Boolean rk) {
+        this.rk = rk;
     }
 
-    @Override
-    public String getIdentifier() {
-        return this.name;
+    public Boolean getRk() {
+        return rk;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        UnknownExtensionClientInput that = (UnknownExtensionClientInput) o;
-        return Objects.equals(name, that.name);
+        CredentialPropertiesOutput that = (CredentialPropertiesOutput) o;
+        return Objects.equals(rk, that.rk);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), name);
+        return Objects.hash(rk);
     }
 }

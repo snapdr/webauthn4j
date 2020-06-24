@@ -17,11 +17,14 @@
 package com.webauthn4j.data.extension;
 
 import java.io.Serializable;
+import java.util.Set;
 
-public interface ExtensionInput<T> extends Serializable {
+public interface ExtensionInput extends Serializable {
 
     String getIdentifier();
 
-    T getValue();
+    Set<String> getKeys();
+
+    Object getValue(String key);
 
 }

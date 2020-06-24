@@ -64,7 +64,7 @@ class AuthenticatorTest {
         private final Set<AuthenticatorTransport> transports;
         private long counter;
 
-        private final Map<String, RegistrationExtensionClientOutput<?>> clientExtensions;
+        private final Map<String, RegistrationExtensionClientOutput> clientExtensions;
         private final Map<String, RegistrationExtensionAuthenticatorOutput<?>> authenticatorExtensions;
 
         public TestAuthenticator(
@@ -72,7 +72,7 @@ class AuthenticatorTest {
                 @JsonProperty("attestationStatement") AttestationStatement attestationStatement,
                 @JsonProperty("counter") long counter,
                 @JsonProperty("transports") Set<AuthenticatorTransport> transports,
-                @JsonProperty("clientExtensions") Map<String, RegistrationExtensionClientOutput<?>> clientExtensions,
+                @JsonProperty("clientExtensions") Map<String, RegistrationExtensionClientOutput> clientExtensions,
                 @JsonProperty("authenticatorExtensions") Map<String, RegistrationExtensionAuthenticatorOutput<?>> authenticatorExtensions) {
             this.attestedCredentialData = attestedCredentialData;
             this.attestationStatement = attestationStatement;
@@ -118,7 +118,7 @@ class AuthenticatorTest {
         }
 
         @Override
-        public Map<String, RegistrationExtensionClientOutput<?>> getClientExtensions() {
+        public Map<String, RegistrationExtensionClientOutput> getClientExtensions() {
             return clientExtensions;
         }
 

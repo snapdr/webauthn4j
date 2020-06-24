@@ -16,36 +16,41 @@
 
 package com.webauthn4j.data.extension;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
-
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
-public abstract class AbstractExtensionOutput<T extends Serializable> implements ExtensionOutput<T> {
+public abstract class SingleValueExtensionInputBase<T extends Serializable> implements ExtensionInput {
 
     private final T value;
 
-    @JsonCreator
-    public AbstractExtensionOutput(T value) {
+    public SingleValueExtensionInputBase(T value) {
         this.value = value;
     }
 
-    @JsonValue
-    public T getValue() {
-        return value;
+    @Override
+    public Set<String> getKeys() {
+        return Collections.singleton(getIdentifier());
     }
 
     @Override
-    public void validate() {
-        // nop
+    public T getValue(String key) {
+        if(!key.equals(getIdentifier())){
+            throw new IllegalArgumentException(String.format("%s is the only valid key.", getIdentifier()));
+        }
+        return value;
+    }
+
+    public T getValue() {
+        return value;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractExtensionOutput<?> that = (AbstractExtensionOutput<?>) o;
+        SingleValueExtensionInputBase<?> that = (SingleValueExtensionInputBase<?>) o;
         return Objects.equals(value, that.value);
     }
 

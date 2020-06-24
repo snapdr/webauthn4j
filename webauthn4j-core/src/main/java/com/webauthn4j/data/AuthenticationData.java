@@ -35,7 +35,7 @@ public class AuthenticationData implements Serializable {
     private final byte[] authenticatorDataBytes;
     private final CollectedClientData collectedClientData;
     private final byte[] collectedClientDataBytes;
-    private final AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput<?>> clientExtensions;
+    private final AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput> clientExtensions;
     private final byte[] signature;
 
     @SuppressWarnings("squid:S107")
@@ -46,7 +46,7 @@ public class AuthenticationData implements Serializable {
             byte[] authenticatorDataBytes,
             CollectedClientData collectedClientData,
             byte[] collectedClientDataBytes,
-            AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput<?>> clientExtensions,
+            AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput> clientExtensions,
             byte[] signature) {
         this.credentialId = ArrayUtil.clone(credentialId);
         this.userHandle = ArrayUtil.clone(userHandle);
@@ -82,7 +82,7 @@ public class AuthenticationData implements Serializable {
         return ArrayUtil.clone(collectedClientDataBytes);
     }
 
-    public AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput<?>> getClientExtensions() {
+    public AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput> getClientExtensions() {
         return clientExtensions;
     }
 

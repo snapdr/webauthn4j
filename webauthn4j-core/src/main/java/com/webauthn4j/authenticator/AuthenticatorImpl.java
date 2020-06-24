@@ -38,11 +38,11 @@ public class AuthenticatorImpl implements Authenticator {
     private Set<AuthenticatorTransport> transports;
     private long counter;
 
-    private Map<String, RegistrationExtensionClientOutput<?>> clientExtensions;
+    private Map<String, RegistrationExtensionClientOutput> clientExtensions;
     private Map<String, RegistrationExtensionAuthenticatorOutput<?>> authenticatorExtensions;
 
     public AuthenticatorImpl(AttestedCredentialData attestedCredentialData, AttestationStatement attestationStatement, long counter, Set<AuthenticatorTransport> transports,
-                             Map<String, RegistrationExtensionClientOutput<?>> clientExtensions,
+                             Map<String, RegistrationExtensionClientOutput> clientExtensions,
                              Map<String, RegistrationExtensionAuthenticatorOutput<?>> authenticatorExtensions) {
         this.attestedCredentialData = attestedCredentialData;
         this.attestationStatement = attestationStatement;
@@ -112,11 +112,11 @@ public class AuthenticatorImpl implements Authenticator {
     }
 
     @Override
-    public Map<String, RegistrationExtensionClientOutput<?>> getClientExtensions() {
+    public Map<String, RegistrationExtensionClientOutput> getClientExtensions() {
         return clientExtensions;
     }
 
-    public void setClientExtensions(Map<String, RegistrationExtensionClientOutput<?>> clientExtensions) {
+    public void setClientExtensions(Map<String, RegistrationExtensionClientOutput> clientExtensions) {
         this.clientExtensions = clientExtensions;
     }
 

@@ -16,18 +16,26 @@
 
 package com.webauthn4j.data.extension.client;
 
-import org.junit.jupiter.api.Test;
+import com.webauthn4j.data.extension.SingleValueExtensionOutputBase;
+import com.webauthn4j.data.extension.UvmEntries;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import java.util.Collections;
+import java.util.Set;
 
-class UnknownExtensionClientOutputTest {
+public class UserVerificationMethodExtensionClientOutput
+        extends SingleValueExtensionOutputBase<UvmEntries>
+        implements RegistrationExtensionClientInput, AuthenticationExtensionClientOutput {
 
-    @Test
-    void equals_hashCode_test(){
-        UnknownExtensionClientOutput instanceA = new UnknownExtensionClientOutput("unknown", true);
-        UnknownExtensionClientOutput instanceB = new UnknownExtensionClientOutput("unknown", true);
-        assertThat(instanceA).isEqualTo(instanceB);
-        assertThat(instanceA).hasSameHashCodeAs(instanceB);
+    public static final String ID = "appid";
+    public static final Set<String> KEYS = Collections.singleton(ID);
+
+    public UserVerificationMethodExtensionClientOutput(UvmEntries value) {
+        super(value);
+    }
+
+    @Override
+    public String getIdentifier() {
+        return ID;
     }
 
 }

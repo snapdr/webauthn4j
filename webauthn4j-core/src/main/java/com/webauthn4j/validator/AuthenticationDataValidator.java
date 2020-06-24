@@ -99,7 +99,7 @@ public class AuthenticationDataValidator {
         CollectedClientData collectedClientData = authenticationData.getCollectedClientData();
 
         AuthenticatorData<AuthenticationExtensionAuthenticatorOutput<?>> authenticatorData = authenticationData.getAuthenticatorData();
-        AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput<?>> clientExtensions = authenticationData.getClientExtensions();
+        AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput> clientExtensions = authenticationData.getClientExtensions();
         ServerProperty serverProperty = authenticationParameters.getServerProperty();
 
         BeanAssertUtil.validate(collectedClientData);

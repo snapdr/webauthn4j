@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package test;
+package com.webauthn4j.data.extension.client;
 
-import com.webauthn4j.data.extension.SingleValueExtensionOutputBase;
-import com.webauthn4j.data.extension.authenticator.RegistrationExtensionAuthenticatorOutput;
+import com.webauthn4j.data.extension.SingleValueExtensionInputBase;
 
-public class TestExtensionAuthenticatorOutput extends SingleValueExtensionOutputBase<Boolean> implements RegistrationExtensionAuthenticatorOutput<Boolean> {
+public class FIDOAppIDExclusionExtensionClientInput extends SingleValueExtensionInputBase<String> implements AuthenticationExtensionClientInput{
 
-    public static String ID = "test";
+    public static final String ID = "appidExclude";
 
-    public TestExtensionAuthenticatorOutput(boolean value) {
-        super(value);
+    public FIDOAppIDExclusionExtensionClientInput(String appIdExclude) {
+        super(appIdExclude);
     }
 
     @Override
     public String getIdentifier() {
         return ID;
+    }
+
+    public String getAppidExclude() {
+        return getValue(ID);
     }
 }

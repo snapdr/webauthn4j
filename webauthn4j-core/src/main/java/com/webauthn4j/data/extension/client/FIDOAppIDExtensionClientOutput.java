@@ -16,13 +16,17 @@
 
 package com.webauthn4j.data.extension.client;
 
-import com.webauthn4j.data.extension.AbstractExtensionOutput;
+import com.webauthn4j.data.extension.SingleValueExtensionOutputBase;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class FIDOAppIDExtensionClientOutput
-        extends AbstractExtensionOutput<Boolean>
-        implements AuthenticationExtensionClientOutput<Boolean> {
+        extends SingleValueExtensionOutputBase<Boolean>
+        implements AuthenticationExtensionClientOutput {
 
     public static final String ID = "appid";
+    public static final Set<String> KEYS = Collections.singleton(ID);
 
     public FIDOAppIDExtensionClientOutput(Boolean value) {
         super(value);

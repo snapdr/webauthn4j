@@ -25,7 +25,7 @@ class CredentialPropertiesExtensionClientOutputTest {
 
     @Test
     void test() {
-        CredentialPropertiesExtensionClientOutput target = new CredentialPropertiesExtensionClientOutput(new CredentialPropertiesExtensionClientOutput.CredentialPropertiesOutput(true));
+        CredentialPropertiesExtensionClientOutput target = new CredentialPropertiesExtensionClientOutput(new CredentialPropertiesOutput(true));
         assertThat(target.getIdentifier()).isEqualTo(CredentialPropertiesExtensionClientOutput.ID);
     }
 
@@ -34,14 +34,14 @@ class CredentialPropertiesExtensionClientOutputTest {
     class CredentialPropertiesOutputTest{
         @Test
         void getter_test(){
-            CredentialPropertiesExtensionClientOutput.CredentialPropertiesOutput target = new CredentialPropertiesExtensionClientOutput.CredentialPropertiesOutput(true);
+            CredentialPropertiesOutput target = new CredentialPropertiesOutput(true);
             assertThat(target.getRk()).isTrue();
         }
 
         @Test
         void equals_hashCode_test(){
-            CredentialPropertiesExtensionClientOutput.CredentialPropertiesOutput instanceA = new CredentialPropertiesExtensionClientOutput.CredentialPropertiesOutput(true);
-            CredentialPropertiesExtensionClientOutput.CredentialPropertiesOutput instanceB = new CredentialPropertiesExtensionClientOutput.CredentialPropertiesOutput(true);
+            CredentialPropertiesOutput instanceA = new CredentialPropertiesOutput(true);
+            CredentialPropertiesOutput instanceB = new CredentialPropertiesOutput(true);
             assertThat(instanceA).isEqualTo(instanceB);
             assertThat(instanceA).hasSameHashCodeAs(instanceB);
         }

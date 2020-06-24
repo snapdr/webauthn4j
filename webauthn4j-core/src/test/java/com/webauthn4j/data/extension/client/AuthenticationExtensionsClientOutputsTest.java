@@ -18,8 +18,6 @@ package com.webauthn4j.data.extension.client;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 
@@ -27,11 +25,11 @@ class AuthenticationExtensionsClientOutputsTest {
 
     @Test
     void instance_can_store_concrete_extension_test() {
-        FIDOAppIDExtensionClientOutput fidoAppIDExtensionClientOutput = new FIDOAppIDExtensionClientOutput(true);
         assertThatCode(() -> {
-            AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput<?>> clientExtensions =
-                    new AuthenticationExtensionsClientOutputs<>(Collections.singletonMap(FIDOAppIDExtensionClientOutput.ID, fidoAppIDExtensionClientOutput));
-            assertThat(clientExtensions.size()).isEqualTo(1);
+            AuthenticationExtensionsClientOutputs.BuilderForAuthentication builder = new AuthenticationExtensionsClientOutputs.BuilderForAuthentication();
+            builder.setAppid(true);
+            AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput> extensions = builder.build();
+            assertThat(extensions.getKeys().size()).isEqualTo(1);
         }).doesNotThrowAnyException();
     }
 

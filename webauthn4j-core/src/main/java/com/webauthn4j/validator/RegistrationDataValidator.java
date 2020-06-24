@@ -88,7 +88,7 @@ public class RegistrationDataValidator {
         CollectedClientData collectedClientData = registrationData.getCollectedClientData();
         AttestationObject attestationObject = registrationData.getAttestationObject();
         Set<AuthenticatorTransport> transports = registrationData.getTransports();
-        AuthenticationExtensionsClientOutputs<RegistrationExtensionClientOutput<?>> clientExtensions = registrationData.getClientExtensions();
+        AuthenticationExtensionsClientOutputs<RegistrationExtensionClientOutput> clientExtensions = registrationData.getClientExtensions();
 
         validateAuthenticatorDataField(attestationObject.getAuthenticatorData());
 

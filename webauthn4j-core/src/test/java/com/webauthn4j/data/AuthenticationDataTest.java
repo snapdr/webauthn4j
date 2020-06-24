@@ -39,7 +39,7 @@ class AuthenticationDataTest {
         CollectedClientData collectedClientData = mock(CollectedClientData.class);
         byte[] collectedClientDataBytes = new byte[128];
         String clientExtensionJSON = "";
-        AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput<?>> authenticationExtensionsClientOutputs = null;
+        AuthenticationExtensionsClientOutputs<AuthenticationExtensionClientOutput> authenticationExtensionsClientOutputs = null;
         byte[] signature = new byte[32];
 
         AuthenticationData instanceA = new AuthenticationData(

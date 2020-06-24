@@ -16,31 +16,50 @@
 
 package com.webauthn4j.data.extension;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.webauthn4j.validator.exception.ConstraintViolationException;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Objects;
+import java.util.Set;
 
-public abstract class AbstractExtensionInput<T extends Serializable> implements ExtensionInput<T> {
+public abstract class SingleValueExtensionOutputBase<T extends Serializable> implements ExtensionOutput {
 
     private final T value;
 
-    @JsonCreator
-    public AbstractExtensionInput(T value) {
+    public SingleValueExtensionOutputBase(T value) {
         this.value = value;
     }
 
-    @JsonValue
+    @Override
+    public Set<String> getKeys() {
+        return Collections.singleton(getIdentifier());
+    }
+
+    @Override
+    public T getValue(String key) {
+        if(!key.equals(getIdentifier())){
+            throw new IllegalArgumentException(String.format("%s is the only valid key.", getIdentifier()));
+        }
+        return value;
+    }
+
     public T getValue() {
         return value;
+    }
+
+    @Override
+    public void validate() {
+        if(getValue() == null){
+            throw new ConstraintViolationException("value must not be null");
+        }
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AbstractExtensionInput<?> that = (AbstractExtensionInput<?>) o;
+        SingleValueExtensionOutputBase<?> that = (SingleValueExtensionOutputBase<?>) o;
         return Objects.equals(value, that.value);
     }
 
