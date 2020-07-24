@@ -26,11 +26,13 @@ description = "WebAuthn4J Demo Quarkus Application"
 dependencies {
     implementation enforcedPlatform("io.quarkus:quarkus-universe-bom:1.3.1.Final")
 
+    implementation 'javax.servlet:servlet-api:2.5' //TODO
+
     implementation 'io.quarkus:quarkus-resteasy'
     implementation 'io.quarkus:quarkus-resteasy-jackson'
     implementation 'io.quarkus:quarkus-hibernate-validator'
 
-    implementation 'com.webauthn4j:webauthn4j-core:0.11.0.RELEASE'
+    implementation project(':webauthn4j-core')
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-cbor' //TODO: This should not be needed as it is already a dependency of webauthn4j-util. It seems a issue of quarkus.
 
     testImplementation 'io.quarkus:quarkus-junit5'
