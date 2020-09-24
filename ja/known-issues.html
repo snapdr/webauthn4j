@@ -444,12 +444,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#既知の問題">1. 既知の問題</a>
 <ul class="sectlevel2">
-<li><a href="#safariのサポート">1.1. Safariのサポート</a></li>
-<li><a href="#androidのresidentkey対応">1.2. AndroidのResidentKey対応</a></li>
-<li><a href="#firefox">1.3. Firefox</a></li>
-<li><a href="#ブラウザ間でのサポート状況の差異">1.4. ブラウザ間でのサポート状況の差異</a></li>
-<li><a href="#ecdaaのサポート">1.5. ECDAAのサポート</a></li>
-<li><a href="#ps256ps384ps512のサポート">1.6. PS256、PS384、PS512のサポート</a></li>
+<li><a href="#androidのresidentkey対応">1.1. AndroidのResidentKey対応</a></li>
+<li><a href="#firefox">1.2. Firefox</a></li>
+<li><a href="#ブラウザ間でのサポート状況の差異">1.3. ブラウザ間でのサポート状況の差異</a></li>
+<li><a href="#ecdaaのサポート">1.4. ECDAAのサポート</a></li>
+<li><a href="#ps256ps384ps512のサポート">1.5. PS256、PS384、PS512のサポート</a></li>
 </ul>
 </li>
 </ul>
@@ -464,15 +463,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 本節では、2019/12 現在のWebAuthnを活用する上での既知の問題を整理します。</p>
 </div>
 <div class="sect2">
-<h3 id="safariのサポート"><a class="anchor" href="#safariのサポート"></a>1.1. Safariのサポート</h3>
-<div class="paragraph">
-<p>macOSではSafari 13からWebAuthnのサポートが開始されました。
-iPhone/iPadではiOS 13.3のSafariから、WebAuthnのサポートが開始されました。どちらも外部セキュリティキーのサポートのみであり、
-Touch ID/Face ID のサポートは始まっていません。</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="androidのresidentkey対応"><a class="anchor" href="#androidのresidentkey対応"></a>1.2. AndroidのResidentKey対応</h3>
+<h3 id="androidのresidentkey対応"><a class="anchor" href="#androidのresidentkey対応"></a>1.1. AndroidのResidentKey対応</h3>
 <div class="paragraph">
 <p>AndroidのFIDO APIはResidentKey対応が完了していません。即ち、Chrome for AndroidとFirefox for Androidでは
 ユーザーに対して認証時のID入力を省いた認証体験を提供することは出来ません。</p>
@@ -492,14 +483,14 @@ Roaming Authenticatorを利用して別デバイスで認証を行う場合に�
 </div>
 </div>
 <div class="sect2">
-<h3 id="firefox"><a class="anchor" href="#firefox"></a>1.3. Firefox</h3>
+<h3 id="firefox"><a class="anchor" href="#firefox"></a>1.2. Firefox</h3>
 <div class="paragraph">
 <p>FirefoxはWindows 10 1903からOS標準のWebAuthn APIを利用することでCTAP2のAuthenticatorに対応しています。
 macOSや、Linuxでは、FIDO U2FのAuthenticatorのみに対応しています。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="ブラウザ間でのサポート状況の差異"><a class="anchor" href="#ブラウザ間でのサポート状況の差異"></a>1.4. ブラウザ間でのサポート状況の差異</h3>
+<h3 id="ブラウザ間でのサポート状況の差異"><a class="anchor" href="#ブラウザ間でのサポート状況の差異"></a>1.3. ブラウザ間でのサポート状況の差異</h3>
 <div class="paragraph">
 <p>各ブラウザ、WebAuthnへの対応が進みつつありますが、上記の通りサポート状況には差異があり、あるプラットフォームで
 サポートされている機能が別のプラットフォームでは利用できないことは珍しくなりません。
@@ -508,14 +499,15 @@ WebAuthnが利用できないユーザーを考慮してWebAuthn以外での二�
 </div>
 </div>
 <div class="sect2">
-<h3 id="ecdaaのサポート"><a class="anchor" href="#ecdaaのサポート"></a>1.5. ECDAAのサポート</h3>
+<h3 id="ecdaaのサポート"><a class="anchor" href="#ecdaaのサポート"></a>1.4. ECDAAのサポート</h3>
 <div class="paragraph">
 <p>WebAuthn4JはECDAA(Elliptic Curve based Direct Anonymous Attestation)アルゴリズムをサポートしていません。
-ECDAAアルゴリズムはWebAuthn仕様でオプションとされており、主要ブラウザでもサポートされていない為、当面サポートする予定はありません。</p>
+ECDAAアルゴリズムはWebAuthn仕様でオプションとされており、主要ブラウザでもサポートされていない為、当面サポートする予定はありません。
+WebAuthn Level2仕様からECDAAのサポートは削除されました。</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="ps256ps384ps512のサポート"><a class="anchor" href="#ps256ps384ps512のサポート"></a>1.6. PS256、PS384、PS512のサポート</h3>
+<h3 id="ps256ps384ps512のサポート"><a class="anchor" href="#ps256ps384ps512のサポート"></a>1.5. PS256、PS384、PS512のサポート</h3>
 <div class="paragraph">
 <p>WebAuthn4JはPS256、PS384、PS512アルゴリズムをサポートしていません。
 PS256、PS384、PS512アルゴリズムはWebAuthn仕様でオプションとされており、Java Crypto APIでも標準のProviderではサポートされていない為、
@@ -528,7 +520,7 @@ PS256、PS384、PS512アルゴリズムはWebAuthn仕様でオプションとさ
 <div id="footer">
 <div id="footer-text">
 Version 0.14.0-SNAPSHOT<br>
-Last updated 2020-09-23 16:12:52 UTC
+Last updated 2020-09-24 12:53:07 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
