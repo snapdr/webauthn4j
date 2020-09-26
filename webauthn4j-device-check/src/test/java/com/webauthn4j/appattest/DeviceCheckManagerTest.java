@@ -22,9 +22,12 @@ import com.webauthn4j.appattest.data.attestation.statement.AppleAppAttestAttesta
 import com.webauthn4j.authenticator.CoreAuthenticator;
 import com.webauthn4j.authenticator.CoreAuthenticatorImpl;
 import com.webauthn4j.converter.AttestedCredentialDataConverter;
+import com.webauthn4j.converter.AuthenticatorDataConverter;
 import com.webauthn4j.converter.util.ObjectConverter;
 import com.webauthn4j.data.attestation.authenticator.AttestedCredentialData;
+import com.webauthn4j.data.attestation.authenticator.AuthenticatorData;
 import com.webauthn4j.data.client.challenge.DefaultChallenge;
+import com.webauthn4j.data.extension.authenticator.AuthenticationExtensionAuthenticatorOutput;
 import com.webauthn4j.data.extension.authenticator.AuthenticationExtensionsAuthenticatorOutputs;
 import com.webauthn4j.server.CoreServerProperty;
 import com.webauthn4j.test.TestAttestationUtil;
@@ -60,11 +63,12 @@ class DeviceCheckManagerTest {
     void validate_assertion_test(){
         DeviceCheckManager deviceCheckManager = DeviceCheckManager.createNonStrictDeviceCheckManager();
         byte[] credentialId = Base64UrlUtil.decode("VE6UgQUJE-mMNLyJLJ8lzPDIvUYHp_Z93jIWAI2ZFXs");
-        byte[] authenticatorData = Base64UrlUtil.decode(""); //TODO
-        byte[] clientDataHash = Base64UrlUtil.decode(""); //TODO
-        byte[] signature = Base64UrlUtil.decode(""); //TODO
+        byte[] authenticatorData = Base64UrlUtil.decode("RWUS6n4mlHark-G3lxaFWS_3P4lKwOwv1UgIoIv7bI9AAAAAAQ");
+        byte[] clientDataHash = Base64UrlUtil.decode("i-ZcylFa0JfJU5Z9GNY12G3XihQu09B3UmvtEca-xns");
+        byte[] signature = Base64UrlUtil.decode("MEUCIQD3WAzMNFR0OAVtu-DaC6_5P9aSx-s0hWg2xO6kNlmTEgIgD4uMYeqLDUJUEHpWlRE417N_8MlHnfUUi7uRmTeFod4");
+        AuthenticatorData<AuthenticationExtensionAuthenticatorOutput> authenticatorDataObj = new AuthenticatorDataConverter(objectConverter).convert(authenticatorData);
         DCAssertionRequest dcAssertionRequest = new DCAssertionRequest(credentialId, authenticatorData, clientDataHash, signature);
-        CoreServerProperty coreServerProperty = new CoreServerProperty("6MURL8TA57.de.vincent-haupert.AppleAppAttestPoc", new DefaultChallenge("7LZm13hyXslzBwRNZCv00WCqu3b1bABpxx6iWx6SaCU"));
+        CoreServerProperty coreServerProperty = new CoreServerProperty("6MURL8TA57.de.vincent-haupert.AppleAppAttestPoc", new DefaultChallenge("d3VyemVs"));
         long counter = 0;
         byte[] attestedCredentialDataBytes = Base64UrlUtil.decode("YXBwYXR0ZXN0ZGV2ZWxvcAAgVE6UgQUJE-mMNLyJLJ8lzPDIvUYHp_Z93jIWAI2ZFXulAQIDJiABIVggd3fNlIdsxzxWx_OgvuT90jToN-8SDNG0bqqM9Lkk5EgiWCBW6GXPff8BZV1tDGSq7sw9FAB1poPSsgZOENL5YSdAkw");
         AttestedCredentialData attestedCredentialData = attestedCredentialDataConverter.convert(attestedCredentialDataBytes);
