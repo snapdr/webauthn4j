@@ -503,7 +503,7 @@ ClientDataに書き込んで署名を行います。WebAuthn4Jは書き込まれ
 <div class="paragraph">
 <p>検証に失敗した場合は、 <code>ValidationException</code> のサブクラスの例外が発生します。
 検証に成功した場合は、返却された値から <code>Authenticator</code> インスタンスを作成し、データベース等へアプリケーション側で永続化して下さい。
-認証時に必要となります。</p>
+認証時に必要となります。永続化方法について詳しくは、 <a href="./deep-dive.html#authenticatorのシリアライズデシリアライズ">Authenticatorのシリアライズ、デシリアライズ</a> を参照して下さい。</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -650,7 +650,7 @@ updateCounter(
 <div id="footer">
 <div id="footer-text">
 Version 0.14.0-SNAPSHOT<br>
-Last updated 2020-09-25 16:14:29 UTC
+Last updated 2020-09-26 08:53:16 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

@@ -444,12 +444,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#deep-dive">1. Deep-Dive</a>
 <ul class="sectlevel2">
-<li><a href="#using-fido-ctap2-security-key-in-your-own-application-other-than-webauthn">1.1. Using FIDO CTAP2 Security key in your own application other than WebAuthn</a></li>
-<li><a href="#project-modules">1.2. Project Modules</a></li>
-<li><a href="#custom-converter-implementation">1.3. Custom converter implementation</a></li>
-<li><a href="#custom-validator-implementation">1.4. Custom validator implementation</a></li>
-<li><a href="#classes">1.5. Classes</a></li>
-<li><a href="#logging">1.6. Logging</a></li>
+<li><a href="#representation-of-an-authenticator">1.1. Representation of an authenticator</a></li>
+<li><a href="#authenticator-serialization-and-deserialization">1.2. Authenticator serialization and deserialization</a></li>
+<li><a href="#using-fido-ctap2-security-key-in-your-own-application-other-than-webauthn">1.3. Using FIDO CTAP2 Security key in your own application other than WebAuthn</a></li>
+<li><a href="#project-modules">1.4. Project Modules</a></li>
+<li><a href="#custom-converter-implementation">1.5. Custom converter implementation</a></li>
+<li><a href="#custom-validator-implementation">1.6. Custom validator implementation</a></li>
+<li><a href="#classes">1.7. Classes</a></li>
+<li><a href="#logging">1.8. Logging</a></li>
 </ul>
 </li>
 </ul>
@@ -460,13 +462,134 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="deep-dive"><a class="anchor" href="#deep-dive"></a>1. Deep-Dive</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="using-fido-ctap2-security-key-in-your-own-application-other-than-webauthn"><a class="anchor" href="#using-fido-ctap2-security-key-in-your-own-application-other-than-webauthn"></a>1.1. Using FIDO CTAP2 Security key in your own application other than WebAuthn</h3>
+<h3 id="representation-of-an-authenticator"><a class="anchor" href="#representation-of-an-authenticator"></a>1.1. Representation of an authenticator</h3>
+<div class="paragraph">
+<p>WebAuthn4j provides <code>Authenticator</code> interface as a representation of an authenticator.</p>
+</div>
+<div class="paragraph">
+<p>On registering the authenticator, you need to persist its representation by creating the instance implementing
+<code>Authenticator</code> interface in your application manner because it is used afterwards on authentication verification.
+It might be better to use credentialId as a search key for this persisted instance.</p>
+</div>
+<div class="paragraph">
+<p>You can freely enhance the class implementing <code>Authenticator</code> interface in order to meet your application&#8217;s requirements.
+For example, you can add the field for your application&#8217;s user to identify the authenticator.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="authenticator-serialization-and-deserialization"><a class="anchor" href="#authenticator-serialization-and-deserialization"></a>1.2. Authenticator serialization and deserialization</h3>
+<div class="paragraph">
+<p>While it is application&#8217;s responsibility to serialize <code>Authenticator</code> instance at registration, WebAuthn4J provides
+an utility class to serialize or deserialize members of <code>Authenticator</code> class. Please use them for implementing persistence in your application.</p>
+</div>
+<div class="sect3">
+<h4 id="attestedcredentialdata"><a class="anchor" href="#attestedcredentialdata"></a>1.2.1. attestedCredentialData</h4>
+<div class="paragraph">
+<p><code>AttestedCredentialDataConverter</code> converts from <code>AttestedCredentialData</code> to <code>byte[]</code> and vice versa.
+If you would like to persist as <code>String</code>, use <code>Base64UrlUtil</code> to convert from <code>byte[]</code> to base64url <code>String</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">AttestedCredentialDataConverter attestedCredentialDataConverter = new AttestedCredentialDataConverter(objectConverter);
+
+// serialize
+byte[] serialized = attestedCredentialDataConverter.convert(attestedCredentialData);
+// deserialize
+AttestedCredentialDataConverter deserialized = attestedCredentialDataConverter.convert(serialized);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="attestationstatement"><a class="anchor" href="#attestationstatement"></a>1.2.2. attestationStatement</h4>
+<div class="paragraph">
+<p>Since <code>AttestationStatement</code> is an interface, there are some implementation classes like <code>PackedAttestationStatement</code> or <code>AndroidKeyAttestationStatement</code> per format.
+As <code>AttestationStatement</code> is not self-descriptive for its format, the format need to be persisted in an another field.
+Because of that, an envelope class which has attestationStatement field and format field is required,
+and the envelope class need to be serialized for persisting <code>AttestationStatement</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">AttestationStatementEnvelope attestationStatementEnvelope = new AttestationStatementEnvelope(format, attestationStatement);
+byte[] serializedEnvelope = objectConverter.getCborConverter().writeValueAsBytes()</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">static class AttestationStatementEnvelope{
+
+    @JsonProperty("attStmt")
+    @JsonTypeInfo(
+            use = JsonTypeInfo.Id.NAME,
+            include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
+            property = "fmt"
+    )
+    private AttestationStatement attestationStatement;
+
+    @JsonCreator
+    public AttestationStatementEnvelope(@JsonProperty("attStmt") AttestationStatement attestationStatement) {
+        this.attestationStatement = attestationStatement;
+    }
+
+    @JsonProperty("fmt")
+    public String getFormat() {
+        return attestationStatement.getFormat();
+    }
+
+    public AttestationStatement getAttestationStatement() {
+        return attestationStatement;
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="transports"><a class="anchor" href="#transports"></a>1.2.3. transports</h4>
+<div class="paragraph">
+<p>If you would like to persist as JSON <code>String</code>, use <code>ObjectConverter</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">String serializedTransports = objectConverter.getJsonConverter().writeValueAsString(transports);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="counter"><a class="anchor" href="#counter"></a>1.2.4. counter</h4>
+<div class="paragraph">
+<p>This member is <code>long</code>. Nothing special is required.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="authenticatorextensions"><a class="anchor" href="#authenticatorextensions"></a>1.2.5. authenticatorExtensions</h4>
+<div class="paragraph">
+<p>This member can be serialized as CBOR as it is originally CBOR data.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">byte[] serializedAuthenticatorExtensions = objectConverter.getCborConverter().writeValueAsBytes(authenticatorExtensions);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="clientextensions"><a class="anchor" href="#clientextensions"></a>1.2.6. clientExtensions</h4>
+<div class="paragraph">
+<p>This member can be serialized as JSON as it is originally JSON data.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">String serializedClientExtensions = objectConverter.getJsonConverter().writeValueAsString(clientExtensions);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-fido-ctap2-security-key-in-your-own-application-other-than-webauthn"><a class="anchor" href="#using-fido-ctap2-security-key-in-your-own-application-other-than-webauthn"></a>1.3. Using FIDO CTAP2 Security key in your own application other than WebAuthn</h3>
 <div class="paragraph">
 <p>For FIDO CTAP2 Security key, WebAuthn is just an application. An original application can use a a security key too.
 This section describes how to use WebAuthn4J for attestation and assertion validation in your own application using the FIDO CTAP2 security key.</p>
 </div>
 <div class="sect3">
-<h4 id="registration-authentication-flow-of-your-own-application-using-fido-ctap2-security-key"><a class="anchor" href="#registration-authentication-flow-of-your-own-application-using-fido-ctap2-security-key"></a>1.1.1. Registration &amp; Authentication flow of your own application using FIDO CTAP2 security key</h4>
+<h4 id="registration-authentication-flow-of-your-own-application-using-fido-ctap2-security-key"><a class="anchor" href="#registration-authentication-flow-of-your-own-application-using-fido-ctap2-security-key"></a>1.3.1. Registration &amp; Authentication flow of your own application using FIDO CTAP2 security key</h4>
 <div class="paragraph">
 <p>If you use FIDO CTAP2 security key for authentication in your own application, you need to register the security key first.
 Call the <a href="https://fidoalliance.org/specs/fido2/fido-client-to-authenticator-protocol-v2.1-rd-20191217.html#authenticatorMakeCredential">authenticatorMakeCredential</a> method of the security key
@@ -477,7 +600,7 @@ By validating the retrieved assertion, the application can determine whether the
 </div>
 </div>
 <div class="sect3">
-<h4 id="how-to-validate-application-specific-client-data"><a class="anchor" href="#how-to-validate-application-specific-client-data"></a>1.1.2. How to validate application specific client data</h4>
+<h4 id="how-to-validate-application-specific-client-data"><a class="anchor" href="#how-to-validate-application-specific-client-data"></a>1.3.2. How to validate application specific client data</h4>
 <div class="paragraph">
 <p>Implementing the above flow will provide authentication feature, but if the entity that calls the FIDO CTAP2 security key (client) and the entity that validates the attestation and the assertion are separated, in some cases, an application specific client data is needed to be validated at the server at registration and authentication. The client data itself can be sent together with the attestation and assertion, but in order to protect the client data from MITM attacks, it need to be signed and protected.
 In FIDO CTAP2 specification, there is a parameter named <code>clientDataHash</code> that is common to <a href="https://fidoalliance.org/specs/fido2/fido-client-to-authenticator-protocol-v2.1-rd-20191217.html#authenticatorMakeCredential">authenticatorMakeCredential</a> method used at registration and <a href="https://fidoalliance.org/specs/fido2/fido-client-to-authenticator-protocol-v2.1-rd-20191217.html#authenticatorGetAssertion">authenticatorGetAssertion</a> method used at authentication.
@@ -486,18 +609,18 @@ Since the security key generates a signature from data that contains <code>clien
 </div>
 </div>
 <div class="sect2">
-<h3 id="project-modules"><a class="anchor" href="#project-modules"></a>1.2. Project Modules</h3>
+<h3 id="project-modules"><a class="anchor" href="#project-modules"></a>1.4. Project Modules</h3>
 <div class="paragraph">
 <p>WebAuthn4J consists of the following four modules.</p>
 </div>
 <div class="sect3">
-<h4 id="core-webauthn4j-core-jar"><a class="anchor" href="#core-webauthn4j-core-jar"></a>1.2.1. Core webauthn4j-core.jar</h4>
+<h4 id="core-webauthn4j-core-jar"><a class="anchor" href="#core-webauthn4j-core-jar"></a>1.4.1. Core webauthn4j-core.jar</h4>
 <div class="paragraph">
 <p>Provides core features for attestation and assertion verification.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="metadata-webauthn4j-metadata-jar"><a class="anchor" href="#metadata-webauthn4j-metadata-jar"></a>1.2.2. Metadata webauthn4j-metadata.jar</h4>
+<h4 id="metadata-webauthn4j-metadata-jar"><a class="anchor" href="#metadata-webauthn4j-metadata-jar"></a>1.4.2. Metadata webauthn4j-metadata.jar</h4>
 <div class="paragraph">
 <p>Provides additional features regarding FIDO Metadata Service.
 As FIDO Metadata Statement specification is still draft, it is in experimental status.
@@ -505,28 +628,28 @@ The included classes don&#8217;t follow semantic versioning and the design may b
 </div>
 </div>
 <div class="sect3">
-<h4 id="test-webauthn4j-test-jar"><a class="anchor" href="#test-webauthn4j-test-jar"></a>1.2.3. Test webauthn4j-test.jar</h4>
+<h4 id="test-webauthn4j-test-jar"><a class="anchor" href="#test-webauthn4j-test-jar"></a>1.4.3. Test webauthn4j-test.jar</h4>
 <div class="paragraph">
 <p>Internal library for WebAuthn4J testing. The included classes don&#8217;t follow semantic versioning and the design
 may be changed even though it is public.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="util-webauthn4j-util-jar"><a class="anchor" href="#util-webauthn4j-util-jar"></a>1.2.4. Util webauthn4j-util.jar</h4>
+<h4 id="util-webauthn4j-util-jar"><a class="anchor" href="#util-webauthn4j-util-jar"></a>1.4.4. Util webauthn4j-util.jar</h4>
 <div class="paragraph">
 <p>Contains utility classes used in WebAuthn4J library.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="custom-converter-implementation"><a class="anchor" href="#custom-converter-implementation"></a>1.3. Custom converter implementation</h3>
+<h3 id="custom-converter-implementation"><a class="anchor" href="#custom-converter-implementation"></a>1.5. Custom converter implementation</h3>
 <div class="paragraph">
 <p>WebAuthn4J uses Jackson library for JSON and CBOR serialization and deserialization.
 If you would like to custom serialization or deserialization, register custom serializer or deserializer to the
 underlying Jackson <code>ObjectMapper</code>.</p>
 </div>
 <div class="sect3">
-<h4 id="custom-converter-registration"><a class="anchor" href="#custom-converter-registration"></a>1.3.1. Custom converter registration</h4>
+<h4 id="custom-converter-registration"><a class="anchor" href="#custom-converter-registration"></a>1.5.1. Custom converter registration</h4>
 <div class="paragraph">
 <p>Since WebAuthn4J wraps <code>ObjectMapper</code> with <code>ObjectConverter</code>, inject your customized <code>ObjectMapper</code> through <code>ObjectConverter</code>
 constructor and specify the <code>ObjectConverter</code> instance to the <code>WebAuthnManager</code> instance creation parameter.</p>
@@ -534,14 +657,14 @@ constructor and specify the <code>ObjectConverter</code> instance to the <code>W
 </div>
 </div>
 <div class="sect2">
-<h3 id="custom-validator-implementation"><a class="anchor" href="#custom-validator-implementation"></a>1.4. Custom validator implementation</h3>
+<h3 id="custom-validator-implementation"><a class="anchor" href="#custom-validator-implementation"></a>1.6. Custom validator implementation</h3>
 <div class="paragraph">
 <p>WebAuthn4J can add custom validator.
 For registration validation, implement <code>CustomRegistrationValidator</code>.
 For authentication validation, implement <code>CustomAuthenticationValidator</code>.</p>
 </div>
 <div class="sect3">
-<h4 id="custom-validator-registration"><a class="anchor" href="#custom-validator-registration"></a>1.4.1. Custom validator registration</h4>
+<h4 id="custom-validator-registration"><a class="anchor" href="#custom-validator-registration"></a>1.6.1. Custom validator registration</h4>
 <div class="paragraph">
 <p><code>CustomRegistrationValidator</code> and <code>CustomAuthenticationValidator</code> implementation can be registered to <code>WebAuthnManager</code>
 via its constructor&#8217;s <code>customRegistrationValidators</code> and <code>customAuthenticationValidators</code> parameters.</p>
@@ -549,15 +672,15 @@ via its constructor&#8217;s <code>customRegistrationValidators</code> and <code>
 </div>
 </div>
 <div class="sect2">
-<h3 id="classes"><a class="anchor" href="#classes"></a>1.5. Classes</h3>
+<h3 id="classes"><a class="anchor" href="#classes"></a>1.7. Classes</h3>
 <div class="sect3">
-<h4 id="data-transfer-objects"><a class="anchor" href="#data-transfer-objects"></a>1.5.1. Data Transfer Objects</h4>
+<h4 id="data-transfer-objects"><a class="anchor" href="#data-transfer-objects"></a>1.7.1. Data Transfer Objects</h4>
 <div class="paragraph">
 <p>Classes under <code>com.webauthn4j.data</code> package are designed as immutable DTO.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="converter-jackson-modules-for-webauthn"><a class="anchor" href="#converter-jackson-modules-for-webauthn"></a>1.5.2. Converter, Jackson Modules for WebAuthn</h4>
+<h4 id="converter-jackson-modules-for-webauthn"><a class="anchor" href="#converter-jackson-modules-for-webauthn"></a>1.7.2. Converter, Jackson Modules for WebAuthn</h4>
 <div class="paragraph">
 <p>Classes under <code>com.webauthn4j.data</code> package are designed as being serializable and deserializable.</p>
 </div>
@@ -572,14 +695,14 @@ you can register these modules onto Jackson&#8217;s <code>ObjectMapper</code>.</
 </div>
 </div>
 <div class="sect3">
-<h4 id="trustanchorsresolver"><a class="anchor" href="#trustanchorsresolver"></a>1.5.3. TrustAnchorsResolver</h4>
+<h4 id="trustanchorsresolver"><a class="anchor" href="#trustanchorsresolver"></a>1.7.3. TrustAnchorsResolver</h4>
 <div class="paragraph">
 <p><code>TrustAnchorsResolver</code> interface is used by <code>TrustAnchorCertPathTrustworthinessValidator</code> to explore root certificates
 in the verification of the authenticity of the attestation statements.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="trustanchorsprovider"><a class="anchor" href="#trustanchorsprovider"></a>1.5.4. TrustAnchorsProvider</h4>
+<h4 id="trustanchorsprovider"><a class="anchor" href="#trustanchorsprovider"></a>1.7.4. TrustAnchorsProvider</h4>
 <div class="paragraph">
 <p><code>TrustAnchorsProvider</code> is an interface that <code>TrustAnchorsResolverImpl</code> delegates TrustAnchor load operation to.
 KeyStoreFileTrustAnchorsProvider is provided as an implementation for loading TrustAnchor from Java Key Store file.
@@ -587,14 +710,14 @@ Spring Security WebAuthn also provides <code>CertFileResourcesTrustAnchorProvide
 </div>
 </div>
 <div class="sect3">
-<h4 id="exceptions"><a class="anchor" href="#exceptions"></a>1.5.5. Exceptions</h4>
+<h4 id="exceptions"><a class="anchor" href="#exceptions"></a>1.7.5. Exceptions</h4>
 <div class="paragraph">
 <p>If some verification fails, WebAuthn4J throws an exception class inheriting <code>ValidationException</code>.</p>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="logging"><a class="anchor" href="#logging"></a>1.6. Logging</h3>
+<h3 id="logging"><a class="anchor" href="#logging"></a>1.8. Logging</h3>
 <div class="paragraph">
 <p>WebAuthn4J uses SLF4J as log interface library. You can use any kind of this implementation like Logback as you want.</p>
 </div>
@@ -605,7 +728,7 @@ Spring Security WebAuthn also provides <code>CertFileResourcesTrustAnchorProvide
 <div id="footer">
 <div id="footer-text">
 Version 0.14.0-SNAPSHOT<br>
-Last updated 2020-09-25 16:14:29 UTC
+Last updated 2020-09-26 08:53:16 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

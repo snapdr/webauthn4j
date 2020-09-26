@@ -510,7 +510,8 @@ It is the application&#8217;s responsibility for retaining the issued Challenge.
 <div class="paragraph">
 <p>If validation fails, an exception inheriting <code>ValidationException</code> is thrown.
 If validation succeeds, please create an <code>Authenticator</code> instance from the returned value and persist it to the database
-or something in your application manner. The instance is required at the time of authentication.</p>
+or something in your application manner. The instance is required at the time of authentication.
+For more details about <code>Authenticator</code> serialization, please refer <a href="./deep-dive.html#authenticator-serialization-and-deserialization">Authenticator serialization and deserialization</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -648,7 +649,7 @@ updateCounter(
 <div id="footer">
 <div id="footer-text">
 Version 0.14.0-SNAPSHOT<br>
-Last updated 2020-09-25 16:14:29 UTC
+Last updated 2020-09-26 08:53:16 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
