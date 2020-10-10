@@ -618,11 +618,17 @@ FIDO CTAP2セキュリティキーを呼び出す主体（クライアント）�
 <div class="sect3">
 <h4 id="core-webauthn4j-core-jar"><a class="anchor" href="#core-webauthn4j-core-jar"></a>1.4.1. Core webauthn4j-core.jar</h4>
 <div class="paragraph">
-<p>Attestation/Assertionの検証に関わるコア機能を提供します。</p>
+<p>WebAuthn Attestation/Assertionの検証機能およびコア機能を提供します。</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="metadata-webauthn4j-metadata-jar"><a class="anchor" href="#metadata-webauthn4j-metadata-jar"></a>1.4.2. Metadata webauthn4j-metadata.jar</h4>
+<h4 id="core-webauthn4j-device-check-jar"><a class="anchor" href="#core-webauthn4j-device-check-jar"></a>1.4.2. Core webauthn4j-device-check.jar</h4>
+<div class="paragraph">
+<p>Apple App Attest Attestation/Assertionの検証機能を提供します。</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="metadata-webauthn4j-metadata-jar"><a class="anchor" href="#metadata-webauthn4j-metadata-jar"></a>1.4.3. Metadata webauthn4j-metadata.jar</h4>
 <div class="paragraph">
 <p>FIDO Metadata Serviceを用いたTrustAnchorの解決など、追加的な機能を提供します。
 依拠しているFIDO Metadata Statements仕様がドラフトの為、実験的な提供です。
@@ -630,14 +636,14 @@ FIDO CTAP2セキュリティキーを呼び出す主体（クライアント）�
 </div>
 </div>
 <div class="sect3">
-<h4 id="test-webauthn4j-test-jar"><a class="anchor" href="#test-webauthn4j-test-jar"></a>1.4.3. Test webauthn4j-test.jar</h4>
+<h4 id="test-webauthn4j-test-jar"><a class="anchor" href="#test-webauthn4j-test-jar"></a>1.4.4. Test webauthn4j-test.jar</h4>
 <div class="paragraph">
 <p>WebAuthn4Jのテストを行うための内部ライブラリです。含まれているクラスは、Publicであっても、セマンティックバージョニングに従わずに
 破壊的変更が入る場合があります。</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="util-webauthn4j-util-jar"><a class="anchor" href="#util-webauthn4j-util-jar"></a>1.4.4. Util webauthn4j-util.jar</h4>
+<h4 id="util-webauthn4j-util-jar"><a class="anchor" href="#util-webauthn4j-util-jar"></a>1.4.5. Util webauthn4j-util.jar</h4>
 <div class="paragraph">
 <p>WebAuthn4Jライブラリで使用されるユーティリティクラスをまとめたライブラリです。</p>
 </div>
@@ -730,7 +736,7 @@ Logbackなどログ実装ライブラリを構成し、ログをお好みのス�
 <div id="footer">
 <div id="footer-text">
 Version 0.14.0-SNAPSHOT<br>
-Last updated 2020-10-09 16:21:38 UTC
+Last updated 2020-10-10 00:17:57 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

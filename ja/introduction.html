@@ -475,7 +475,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="webauthn4jとは"><a class="anchor" href="#webauthn4jとは"></a>1.2. WebAuthn4Jとは</h3>
 <div class="paragraph">
-<p>WebAuthn4Jは、Web Authentication仕様に基づくサーバーサイド検証を行うためのJavaライブラリです。WebAuthnではなく、FIDO CTAP2セキュリティキーを用いた独自アプリケーションのサーバーサイド検証に用いることも可能です。
+<p>WebAuthn4Jは、Web Authentication仕様に基づくサーバーサイド検証を行うためのJavaライブラリです。WebAuthnではなく、Apple App Attestや、FIDO CTAP2セキュリティキーを用いた独自アプリケーションのサーバーサイド検証に用いることも可能です。
 Web Authentication仕様で定められた全ての構成証明ステートメント（Attestation）をサポートしながら、外部ライブラリへの依存関係は最小限に抑えたポータブルなライブラリです。</p>
 </div>
 </div>
@@ -513,6 +513,9 @@ WebAuthn4J Spring Securityを利用するのが良いでしょう。</p>
 </li>
 <li>
 <p>None attestation</p>
+</li>
+<li>
+<p>Apple App Attest attestation</p>
 </li>
 </ul>
 </div>
@@ -625,7 +628,7 @@ FIDO2 Test ToolsはFIDO2 Transport Binding ProfileのREST API経由でテスト�
 <div id="footer">
 <div id="footer-text">
 Version 0.14.0-SNAPSHOT<br>
-Last updated 2020-10-09 16:22:20 UTC
+Last updated 2020-10-10 00:18:41 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">

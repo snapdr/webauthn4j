@@ -444,8 +444,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#クイックスタート">1. クイックスタート</a>
 <ul class="sectlevel2">
-<li><a href="#構成証明の検証">1.1. 構成証明の検証</a></li>
-<li><a href="#アサーションの検証">1.2. アサーションの検証</a></li>
+<li><a href="#webauthnの検証">1.1. WebAuthnの検証</a></li>
+<li><a href="#apple-app-attestの検証">1.2. Apple App Attestの検証</a></li>
 </ul>
 </li>
 </ul>
@@ -458,10 +458,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>WebAuthn認証は、事前に認証デバイスで生成した公開鍵をサーバーに登録し、認証時に認証デバイスで生成した署名を公開鍵で検証することで認証が成立する認証方式です。
 このクイックスタートでは、WebAuthn4Jを用いてWebAuthn認証における登録時にサーバーに送信される公開鍵やデバイスの構成情報を
-含むデータ（構成証明、Attestation）の検証と、認証時にサーバーに送信される署名を含んだデータ（アサーション、Assertion）を検証する方法を解説します。</p>
+含むデータ（構成証明、Attestation）の検証と、認証時にサーバーに送信される署名を含んだデータ（アサーション、Assertion）を検証する方法を解説します。
+また、Apple App Attestの構成証明、アサーションを検証する方法も示します。</p>
 </div>
 <div class="sect2">
-<h3 id="構成証明の検証"><a class="anchor" href="#構成証明の検証"></a>1.1. 構成証明の検証</h3>
+<h3 id="webauthnの検証"><a class="anchor" href="#webauthnの検証"></a>1.1. WebAuthnの検証</h3>
+<div class="sect3">
+<h4 id="webauthn構成証明の検証"><a class="anchor" href="#webauthn構成証明の検証"></a>1.1.1. WebAuthn構成証明の検証</h4>
 <div class="paragraph">
 <p>認証デバイスの登録時に構成証明を検証する際は、<code>RegistrationRequest</code> を引数に
 <code>WebAuthnManager#validate</code> メソッドを用いて登録リクエストのパース、検証を行ってください。
@@ -554,8 +557,8 @@ save(authenticator); // please persist authenticator in your manner</code></pre>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="アサーションの検証"><a class="anchor" href="#アサーションの検証"></a>1.2. アサーションの検証</h3>
+<div class="sect3">
+<h4 id="webauthnアサーションの検証"><a class="anchor" href="#webauthnアサーションの検証"></a>1.1.2. WebAuthnアサーションの検証</h4>
 <div class="paragraph">
 <p>認証時にアサーションを検証する際は、<code>AuthenticationRequest</code> を引数に  <code>WebAuthnManager#validate</code> メソッドを
 実行してください。<code>AuthenticationRequest</code> の
@@ -582,65 +585,227 @@ save(authenticator); // please persist authenticator in your manner</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint highlight"><code data-lang="java">// Client properties
-byte[] credentialId = null /* set credentialId */;
-byte[] userHandle = null /* set userHandle */;
-byte[] authenticatorData = null /* set authenticatorData */;
-byte[] clientDataJSON = null /* set clientDataJSON */;
-String clientExtensionJSON = null /* set clientExtensionJSON */;
-byte[] signature = null /* set signature */;
+byte[] keyId = null; /* set keyId */
+byte[] attestationObject = null; /* set attestationObject */
+byte[] challenge = null; /* set challenge */
+byte[] clientDataHash = MessageDigestUtil.createSHA256().digest(challenge);
 
 // Server properties
-Origin origin = null /* set origin */;
-String rpId = null /* set rpId */;
-Challenge challenge = null /* set challenge */;
-byte[] tokenBindingId = null /* set tokenBindingId */;
-ServerProperty serverProperty = new ServerProperty(origin, rpId, challenge, tokenBindingId);
+String teamIdentifier = null /* set teamIdentifier */;
+String cfBundleIdentifier = null /* set cfBundleIdentifier */;
+DCServerProperty dcServerProperty = new DCServerProperty(teamIdentifier, cfBundleIdentifier, new DefaultChallenge(challenge));
 
-// expectations
-boolean userVerificationRequired = true;
-boolean userPresenceRequired = true;
-List&lt;String&gt; expectedExtensionIds = Collections.emptyList();
-
-Authenticator authenticator = load(credentialId); // please load authenticator object persisted in the registration process in your manner
-
-AuthenticationRequest authenticationRequest =
-        new AuthenticationRequest(
-                credentialId,
-                userHandle,
-                authenticatorData,
-                clientDataJSON,
-                clientExtensionJSON,
-                signature
-        );
-AuthenticationParameters authenticationParameters =
-        new AuthenticationParameters(
-                serverProperty,
-                authenticator,
-                userVerificationRequired,
-                userPresenceRequired,
-                expectedExtensionIds
-        );
-
-AuthenticationData authenticationData;
-try{
-    authenticationData = webAuthnManager.parse(authenticationRequest);
-}
-catch (DataConversionException e){
-    // If you would like to handle WebAuthn data structure parse error, please catch DataConversionException
+DCAttestationRequest dcAttestationRequest = new DCAttestationRequest(keyId, attestationObject, clientDataHash);
+DCAttestationParameters dcAttestationParameters = new DCAttestationParameters(dcServerProperty);
+DCAttestationData dcAttestationData;
+try {
+    dcAttestationData = deviceCheckManager.parse(dcAttestationRequest);
+} catch (DataConversionException e) {
+    // If you would like to handle Apple App Attest data structure parse error, please catch DataConversionException
     throw e;
 }
-try{
-    webAuthnManager.validate(authenticationData, authenticationParameters);
+try {
+    deviceCheckManager.validate(dcAttestationData, dcAttestationParameters);
+} catch (ValidationException e) {
+    // If you would like to handle Apple App Attest data validation error, please catch ValidationException
+    throw e;
 }
-catch (ValidationException e){
-    // If you would like to handle WebAuthn data validation error, please catch ValidationException
+
+// please persist Authenticator object, which will be used in the authentication process.
+DCAppleDevice dcAppleDevice =
+        new DCAppleDeviceImpl( // You may create your own Authenticator implementation to save friendly authenticator name
+                dcAttestationData.getAttestationObject().getAuthenticatorData().getAttestedCredentialData(),
+                dcAttestationData.getAttestationObject().getAttestationStatement(),
+                dcAttestationData.getAttestationObject().getAuthenticatorData().getSignCount(),
+                dcAttestationData.getAttestationObject().getAuthenticatorData().getExtensions()
+        );
+save(dcAppleDevice); // please persist authenticator in your manner</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="apple-app-attestの検証"><a class="anchor" href="#apple-app-attestの検証"></a>1.2. Apple App Attestの検証</h3>
+<div class="paragraph">
+<p>続いて、Apple App Attestの検証方法について解説します。
+Apple App Attestは、WebAuthnに類似したデータ構造を持つため、Validatorの設計も、WebAuthn用のValidatorを踏襲しています。
+なお、リスクメトリックの評価には対応していません。</p>
+</div>
+<div class="sect3">
+<h4 id="maven-centralからの取得"><a class="anchor" href="#maven-centralからの取得"></a>1.2.1. Maven Centralからの取得</h4>
+<div class="paragraph">
+<p>Apple App Attestの検証用クラスは、WebAuthn4J本体(webauthn4j-core)とは別の、webauthn4j-device-checkというモジュールとして配布されています。
+Mavenを使用している場合、以下のようにwebauthn4j-device-checkを依存関係として追加してください。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="xml">&lt;properties&gt;
+  ...
+  &lt;!-- Use the latest version whenever possible. --&gt;
+  &lt;webauthn4j.version&gt;0.13.0.RELEASE&lt;/webauthn4j.version&gt;
+  ...
+&lt;/properties&gt;
+
+&lt;dependencies&gt;
+  ...
+  &lt;dependency&gt;
+    &lt;groupId&gt;com.webauthn4j&lt;/groupId&gt;
+    &lt;artifactId&gt;webauthn4j-device-check&lt;/artifactId&gt;
+    &lt;version&gt;${webauthn4j.version}&lt;/version&gt;
+  &lt;/dependency&gt;
+  ...
+&lt;/dependencies&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="apple-app-attest構成証明の検証"><a class="anchor" href="#apple-app-attest構成証明の検証"></a>1.2.2. Apple App Attest構成証明の検証</h4>
+<div class="paragraph">
+<p>認証デバイスの登録時に構成証明を検証する際は、<code>DCAttestationRequest</code> を引数に
+<code>DeviceCheckManager#validate</code> メソッドを用いて登録リクエストのパース、検証を行ってください。
+登録リクエストの検証でエラーが発生した場合に、元のパースされたデータにアクセスしたい場合は、
+<code>DeviceCheckManager#parse</code> メソッドを用いて登録リクエストをパースしたうえで、
+得られた <code>DCAttestationData</code> のインスタンスを <code>DeviceCheckManager#validate</code> メソッドに渡して実行してください。</p>
+</div>
+<div class="paragraph">
+<p><code>DCAttestationRequest</code> のメンバー はiOS上でDevice Check App Attest APIを実行して取得した値となります。
+何らかの方法でiOSデバイス側からサーバー側に伝送し、指定してください。</p>
+</div>
+<div class="paragraph">
+<p><code>DCAttestationParameters</code> は、<code>DeviceCheckManager#validate</code> メソッドのもう一つの引数であり、
+サーバーの状態や検証条件をまとめたパラメータです。 サーバーの状態については、 <code>DCServerProperty</code> としてまとめています。
+<code>DCServerProperty</code> のコンストラクタを呼び出す際のパラメータには以下の値を指定して下さい。</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>teamIdentifier</code> にはiOSアプリ開発時のteam identifierを指定してください。
+詳しくは <a href="https://developer.apple.com/documentation/devicecheck/validating_apps_that_connect_to_your_server">Apple Apple Attestのサーバサイド検証手順</a> を参照して下さい。</p>
+</li>
+<li>
+<p><code>cfBundleIdentifier</code> にはiOSアプリ開発時のbundle identifierを指定してください。
+詳しくは <a href="https://developer.apple.com/documentation/devicecheck/validating_apps_that_connect_to_your_server">Apple Apple Attestのサーバサイド検証手順</a> を参照して下さい。</p>
+</li>
+<li>
+<p><code>challenge</code> には発行したChallengeを指定して下さい。<code>challenge</code> はリプレイ攻撃を防ぐ為のパラメータです。
+サーバー側で <code>challenge</code> としてランダムなバイト列を生成し、iOS側でApp Attest APIを実行する際に
+パラメータとして指定して署名対象に含め、サーバー側で値の一致を検証することで、リプレイ攻撃からユーザーを防御することが出来ます。
+発行したChallengeを検証時まで永続化しておくのはアプリケーション側の責務です。セッションなどに格納しておくと良いでしょう。</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>検証に失敗した場合は、 <code>ValidationException</code> のサブクラスの例外が発生します。
+検証に成功した場合は、返却された値から <code>DCAppleDevice</code> インスタンスを作成し、データベース等へアプリケーション側で永続化して下さい。
+認証時に必要となります。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">// Client properties
+byte[] keyId = null; /* set keyId */
+byte[] attestationObject = null; /* set attestationObject */
+byte[] challenge = null; /* set challenge */
+byte[] clientDataHash = MessageDigestUtil.createSHA256().digest(challenge);
+
+// Server properties
+String teamIdentifier = null /* set teamIdentifier */;
+String cfBundleIdentifier = null /* set cfBundleIdentifier */;
+DCServerProperty dcServerProperty = new DCServerProperty(teamIdentifier, cfBundleIdentifier, new DefaultChallenge(challenge));
+
+DCAttestationRequest dcAttestationRequest = new DCAttestationRequest(keyId, attestationObject, clientDataHash);
+DCAttestationParameters dcAttestationParameters = new DCAttestationParameters(dcServerProperty);
+DCAttestationData dcAttestationData;
+try {
+    dcAttestationData = deviceCheckManager.parse(dcAttestationRequest);
+} catch (DataConversionException e) {
+    // If you would like to handle Apple App Attest data structure parse error, please catch DataConversionException
+    throw e;
+}
+try {
+    deviceCheckManager.validate(dcAttestationData, dcAttestationParameters);
+} catch (ValidationException e) {
+    // If you would like to handle Apple App Attest data validation error, please catch ValidationException
+    throw e;
+}
+
+// please persist Authenticator object, which will be used in the authentication process.
+DCAppleDevice dcAppleDevice =
+        new DCAppleDeviceImpl( // You may create your own Authenticator implementation to save friendly authenticator name
+                dcAttestationData.getAttestationObject().getAuthenticatorData().getAttestedCredentialData(),
+                dcAttestationData.getAttestationObject().getAttestationStatement(),
+                dcAttestationData.getAttestationObject().getAuthenticatorData().getSignCount(),
+                dcAttestationData.getAttestationObject().getAuthenticatorData().getExtensions()
+        );
+save(dcAppleDevice); // please persist authenticator in your manner</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="apple-app-attestアサーションの検証"><a class="anchor" href="#apple-app-attestアサーションの検証"></a>1.2.3. Apple App Attestアサーションの検証</h4>
+<div class="paragraph">
+<p>認証時にアサーションを検証する際は、<code>DCAssertionRequest</code> を引数に  <code>DeviceCheckManager#validate</code> メソッドを
+実行してください。<code>DCAssertionRequest</code> の
+コンストラクタの引数に指定する、 <code>keyId</code> と <code>assertion</code> 、 <code>clientDataHash</code> は
+iOS側でApple App Attest APIを実行して取得した値となります。
+何らかの方法でフロントエンド側からサーバー側に伝送し、指定してください。
+<code>DeviceCheckManager#validate</code> メソッドのもう一つの引数である <code>DCAssertionParameters</code>  の
+コンストラクタの引数に指定する、 <code>serverProperty</code> はサーバー側から取得する値をまとめたパラメータです。</p>
+</div>
+<div class="paragraph">
+<p><code>DCAppleDevice</code> には、登録時に永続化した <code>DCAppleDevice</code> を指定してください。</p>
+</div>
+<div class="paragraph">
+<p>検証に失敗した場合は、 <code>ValidationException</code> のサブクラスの例外が発生します。
+検証後は、 <code>DCAppleDevice</code> に紐づけたカウンタの値を更新してください。カウンタは万が一認証デバイスのクローンが
+作成された場合を検知するために用意されています。カウンタについて詳しくは
+<a href="https://www.w3.org/TR/webauthn-1/#sign-counter">WebAuthnの仕様書のカウンタの項</a> を参照して下さい。</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint highlight"><code data-lang="java">// Client properties
+byte[] keyId = null /* set keyId */;
+byte[] assertion = null /* set assertion */;
+byte[] clientDataHash = null /* set clientDataHash */;
+
+// Server properties
+String teamIdentifier = null /* set teamIdentifier */;
+String cfBundleIdentifier = null /* set cfBundleIdentifier */;
+byte[] challenge = null;
+DCServerProperty dcServerProperty = new DCServerProperty(teamIdentifier, cfBundleIdentifier, new DefaultChallenge(challenge));
+
+DCAppleDevice dcAppleDevice = load(keyId); // please load authenticator object persisted in the attestation process in your manner
+
+DCAssertionRequest dcAssertionRequest =
+        new DCAssertionRequest(
+                keyId,
+                assertion,
+                clientDataHash
+        );
+DCAssertionParameters dcAssertionParameters =
+        new DCAssertionParameters(
+                dcServerProperty,
+                dcAppleDevice
+        );
+
+DCAssertionData dcAssertionData;
+try {
+    dcAssertionData = deviceCheckManager.parse(dcAssertionRequest);
+} catch (DataConversionException e) {
+    // If you would like to handle Apple App Attest data structure parse error, please catch DataConversionException
+    throw e;
+}
+try {
+    deviceCheckManager.validate(dcAssertionData, dcAssertionParameters);
+} catch (ValidationException e) {
+    // If you would like to handle Apple App Attest data validation error, please catch ValidationException
     throw e;
 }
 // please update the counter of the authenticator record
 updateCounter(
-        authenticationData.getCredentialId(),
-        authenticationData.getAuthenticatorData().getSignCount()
+        dcAssertionData.getCredentialId(),
+        dcAssertionData.getAuthenticatorData().getSignCount()
 );</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -650,7 +815,7 @@ updateCounter(
 <div id="footer">
 <div id="footer-text">
 Version 0.14.0-SNAPSHOT<br>
-Last updated 2020-10-09 16:21:38 UTC
+Last updated 2020-10-10 00:17:57 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
