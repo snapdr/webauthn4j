@@ -572,7 +572,7 @@ are passed.</p>
 </td>
 <td class="content">
 Since FIDO2 Test Tools runs the test via the REST API of FIDO2 Transport Binding Profile,
-it is executed through the REST API implementation provided by Spring Security WebAuthn.
+it is executed through the REST API implementation provided by WebAuthn4j Spring Security.
 </td>
 </tr>
 </table>
@@ -1121,7 +1121,7 @@ It can be used for <code>TrustAnchor</code> resolution by combining with <code>M
 <h3 id="what-webauthn4j-doesnt-offer"><a class="anchor" href="#what-webauthn4j-doesnt-offer"></a>3.2. What WebAuthn4J doesn&#8217;t offer</h3>
 <div class="paragraph">
 <p>In order to realize framework independence, WebAuthn4J intentionally scopes functions to WebAuthn Assertion / Attestation verification. Fetching parameters from HTTP request, issuing and saving Challenge in session, counter Value validation are not provided.
-Please implement in your caller code. If you are using Spring Security, consider using Spring Security WebAuthn as it provides these implementations of authentication framework specific parts.</p>
+Please implement in your caller code. If you are using Spring Security, consider using WebAuthn$J Spring Security as it provides these implementations of authentication framework specific parts.</p>
 </div>
 </div>
 </div>
@@ -1380,7 +1380,7 @@ in the verification of the authenticity of the attestation statements.</p>
 <div class="paragraph">
 <p><code>TrustAnchorsProvider</code> is an interface that <code>TrustAnchorsResolverImpl</code> delegates TrustAnchor load operation to.
 KeyStoreFileTrustAnchorsProvider is provided as an implementation for loading TrustAnchor from Java Key Store file.
-Spring Security WebAuthn also provides <code>CertFileResourcesTrustAnchorProvider</code> to load TrustAnchor from Spring Resource.</p>
+WebAuthn$J Spring Security also provides <code>CertFileResourcesTrustAnchorProvider</code> to load TrustAnchor from Spring Resource.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1467,7 +1467,7 @@ have not yet supported it.</p>
 <div id="footer">
 <div id="footer-text">
 Version 0.14.0-SNAPSHOT<br>
-Last updated 2020-10-10 01:42:41 UTC
+Last updated 2020-10-10 11:34:26 UTC
 </div>
 </div>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
